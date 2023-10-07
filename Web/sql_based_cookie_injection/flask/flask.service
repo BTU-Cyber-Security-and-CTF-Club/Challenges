@@ -1,0 +1,12 @@
+[Unit]
+Description=flask
+After=network.target
+
+[Service]
+User=flask
+WorkingDirectory=/home/flask
+ExecStart=/usr/local/bin/python waitress_server.py
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

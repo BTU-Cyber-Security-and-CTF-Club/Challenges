@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+    <html>
+        <head>
+            <title>Sweet Shop</title>
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <!-- Bootstrap -->
+            <link href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+            <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/main.css') }}">
+        </head>
+        <body>
+            {% block navbar %}
+              <div class="navbar navbar-inverse" role="navigation">
+                  <div class="container-fluid">
+                      <div class="navbar-header">
+                          <a class="navbar-brand" href="/" text-align="left">Sweet Shop</a>
+                      </div>
+                  </div>
+              </div>
+            {% endblock %}
+
+            <form action="" method="post" class="form" role="form">
+              <div class="form-group ">
+                <label class="control-label" for="query">Search for our available yummy products :)</label>
+                <input class="form-control" id="query" name="query" type="text" value="">
+              </div>
+              <input class="btn btn-default" id="submit" name="submit" type="submit" value="Submit">
+            </form>
+            <br>
+
+            {% block images_ %}
+              {% if call_surprise == false %}
+                {% if result_list %}
+                  {% if result_list|length > 0 %}
+                    <div class="gallery-grid">
+                      {% for filename in result_list %}
+                        <figure class="gallery-frame">
+                          <img class="gallery-img" src="{{ url_for('display_image', filename=filename|quote_plus) }}">
+                        </figure>
+                      {% endfor %}
+                    </div>
+                  {% endif %}
+                {% endif %}
+              {% endif %}
+              {% if call_surprise == true %}
+              <br>
+                <p>
+                  <a href="{{ url_for('surprise', random_number=random_number) }}">Secret</a>
+                </p>
+              {% endif %}
+            {% endblock %}
+            <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"/>
+            <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"/>
+         </body>
+  </html>
