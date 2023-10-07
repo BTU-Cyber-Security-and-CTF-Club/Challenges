@@ -1,0 +1,34 @@
+version: '3'
+
+services:
+  flask:
+    container_name: flask
+    build:
+      dockerfile: Dockerfile
+      context: ./flask
+    depends_on: 
+      - mysql
+    environment:
+      MYSQL_HOST: mysql
+    ports:
+      - 127.0.0.1:8080:8080    
+    restart: always    
+    networks:
+      - sql-based-cookie-injection
+
+  mysql:
+    container_name: mysql
+    build:
+      dockerfile: Dockerfile
+      context: ./mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: shoshohN3Eishah8aegae4phiomoot7u
+      MYSQL_DATABASE: flask
+    ports:
+      - 127.0.0.1:3306:3306
+    restart: always
+    networks:
+      - sql-based-cookie-injection
+
+networks:
+  sql-based-cookie-injection:
