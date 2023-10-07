@@ -1,0 +1,1 @@
+BTU{CTF_Club_Cyber_OTP_Flag}
