@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>City Seeker v2.1</title>
+</head>
+<body>
+    <h1 style="text-align: center">City Seeker v2.1</h1>
+    <div style="margin-left: 15%">
+        <input placeholder="Search..." style="width: 80%; height: 3rem; font-size: x-large; box-sizing: content-box" type="text" id="searchbar">
+    </div>
+    <div id="results">
+    </div>
+    <script>
+        const input = document.getElementById('searchbar')
+        const results = document.getElementById('results')
+
+        const tableHead = '<table style="width: 90%;margin-left: auto"><tr style="border-bottom: 1px solid #ddd"><th>City</th><th>Country</th><th>Population</th></tr>'
+
+        function tableRow(city, country, population) {
+            return `<tr style="border-bottom: 1px solid #ddd"p><td>${city}</td><td>${country}</td><td>${population}</td></tr>`
+        }
+
+        const tableEnd = '</table>'
+
+        input.addEventListener("keypress", function (evt) {
+            if (evt.key === "Enter") {
+                evt.preventDefault()
+                search()
+            }
+        })
+
+        function search() {
+            fetch('/search?' + new URLSearchParams({
+                city: input.value
+            }))
+                .then(response => response.json())
+                .then(response => {
+                    let tableBody = ''
+                    response.forEach(x => tableBody += tableRow(x.name, x.country, x.population))
+                    results.innerHTML = tableHead + tableBody + tableEnd
+                })
+                .catch(err => {
+                    console.error(err)
+                })
+        }
+    </script>
+</body>
+</html>
