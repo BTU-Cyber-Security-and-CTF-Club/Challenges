@@ -1,0 +1,1 @@
+Disallow: /cgi-bin/
