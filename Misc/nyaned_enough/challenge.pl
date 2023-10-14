@@ -6,21 +6,18 @@ $| = 1;
 select STDOUT;
 $| = 1;
 
-print "5badcaf789d3d1d09794d8f021f40f0e\n";
+print "d8578edf8458ce06fbc5bb76a58c5ca4\n";
 print "your answer?\n";
 
 $line = <STDIN>; 
 
 chomp $line;
 
-# 5badcaf789d3d1d09794d8f021f40f0e is the md5 of the word "starwars"
-
 # $line holds the input line from the client.
-# replace \r\n or \r that can come via telnet clients
-$line =~ s/\r\n/\n/g;  # Search for \r\n, replace it with \n
-$line =~ s/\r/\n/g;  # Search for \r, replace it with \n
+# replace \r that can come via telnet clients
+$line =~ s/\r//g;  # Search for \r, replace it with nothing
 
-if ($line =~ m/^starwars$/) {  
+if ($line =~ m/^qwerty$/) {  
     print "that is correct, here you go:\n";
     sleep(2);
     system('/home/whodis/nyancat/src/nyancat -t -s -I');

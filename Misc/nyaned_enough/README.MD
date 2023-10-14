@@ -11,3 +11,7 @@ if they get the answer right, they are greeted by a nyancat cli, every 10th seco
 then connect e.g. with
 
 `nc localhost 8080`
+
+or 
+
+`telnet localhost 8080`
