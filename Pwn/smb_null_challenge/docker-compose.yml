@@ -1,0 +1,37 @@
+version: '3'
+
+services:
+  smb_client:
+   container_name: smb_client
+   image: smb_client
+   build:
+    context: client
+    dockerfile: Dockerfile
+   hostname: smb_client
+   #entrypoint: tail -f /dev/null
+   depends_on:
+    - smb_server
+   #tty: true
+   networks:
+     - smb
+
+  smb_server:
+   container_name: smb_server
+   image: smb_server
+   build:
+    context: server
+    dockerfile: Dockerfile
+   hostname: smb_server
+   ports:
+     - "127.0.0.1:1445:445"
+   networks:
+     - smb
+
+networks:
+    smb:
+        driver: bridge
+        ipam:
+            driver: default
+            config:
+                - 
+                  subnet: 192.168.2.0/24
