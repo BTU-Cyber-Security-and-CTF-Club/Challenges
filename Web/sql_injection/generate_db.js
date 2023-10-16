@@ -9,41 +9,60 @@ if (fs.existsSync('webapp.db')) {
 }
 
 const db = new sqlite3.Database('./webapp.db')
+if (init) {
+    process.exit(0)
+}
 // https://simplemaps.com/static/data/world-cities/basic/simplemaps_worldcities_basicv1.76.zip
 if (!fs.existsSync('worldcities.csv')) {
-    console.error('worldcities.csv missing')
-    process.exit(-1)
-}
+    console.log('Downloading worldcities.csv')
+    const fetch = require('node-fetch')
+    const {pipeline} = require('stream')
+    const {promisify} = require('util')
+    const {createWriteStream} = require('fs')
+    const decompress = require('decompress')
 
-if (init) {
+    const streamPipeline = promisify(pipeline)
+    fetch('https://simplemaps.com/static/data/world-cities/basic/simplemaps_worldcities_basicv1.76.zip')
+        .then(response => {
+            if (!response.ok) throw new Error('Download failed')
+            console.log('Donwload completed')
 
-    db.exec('CREATE TABLE cities (name VARCHAR(250), country VARCHAR(250), population INT)', (err) => {
-        console.log(err)
-    })
+            streamPipeline(response.body, createWriteStream('./worldcities.zip'))
+                .then(() => {
+                    decompress('worldcities.zip', 'world')
+                        .then(() => {
+                            fs.renameSync('./world/worldcities.csv', './worldcities.csv')
 
-    fs.createReadStream("./worldcities.csv")
-        .pipe(parse({ delimiter: ',', from_line: 2}))
-        .on("data", function (row) {
-            db.serialize(function () {
-                db.run(
-                    'INSERT INTO cities VALUES (?, ?, ?)',
-                    [row[0], row[4], row[9]],
-                    function (error) {
-                        console.log(this.lastID)
-                    }
-                )
-            })
+                            db.exec('CREATE TABLE cities (name VARCHAR(250), country VARCHAR(250), population INT)', (err) => {
+                                console.log(err)
+                            })
+                        
+                            fs.createReadStream("./worldcities.csv")
+                                .pipe(parse({ delimiter: ',', from_line: 2}))
+                                .on("data", function (row) {
+                                    db.serialize(function () {
+                                        db.run(
+                                            'INSERT INTO cities VALUES (?, ?, ?)',
+                                            [row[0], row[4], row[9]],
+                                            function (error) {
+                                                console.log(this.lastID)
+                                            }
+                                        )
+                                    })
+                                })
+                                .on("end", function () {
+                                    console.log("finished.")
+                                })
+                                .on("error", function (error) {
+                                    console.error(error.message)
+                                })
+                        
+                            db.exec('CREATE TABLE flag (name VARCHAR(250))', (err) => {
+                                console.log(err)
+                            })
+                        
+                            db.run('INSERT INTO flag VALUES ("BTU{SQL_INJECTION_FLAG}")')
+                        })
+                })
         })
-        .on("end", function () {
-            console.log("finished.")
-        })
-        .on("error", function (error) {
-            console.error(error.message)
-        })
-
-    db.exec('CREATE TABLE flag (name VARCHAR(250))', (err) => {
-        console.log(err)
-    })
-
-    db.run('INSERT INTO flag VALUES ("BTU{SQL_INJECTION_FLAG}")')
 }
