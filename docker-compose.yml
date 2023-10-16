@@ -1,0 +1,53 @@
+version: '3.3'
+services:
+  # Crypto
+  crypto-rsa:
+    build:
+      context: ./Cryptography/RSA/
+    ports: 
+      - "3434:3434"
+
+  # Misc
+  misc-git:
+    build:
+      context: ./Misc/git/
+    ports:
+      - "4000:80"
+  misc-nyaned-enough:
+    build:
+      context: ./Misc/nyaned_enough/
+    ports:
+      - "5000:8080"
+  
+  # Pwn
+  pwn-anon-ftp:
+    build: 
+      context: ./Pwn/Anon FTP Access/
+    ports:
+      - "21:21"
+      - "20:20"
+  pwn-bruteforce-ssh:
+    build:
+      context: ./Pwn/Bruteforce SSH/
+    ports:
+      - "6000:22"
+  pwn-telnet-simple:
+    build:
+      context: ./Pwn/telnet_server_simple_challenge/
+    ports:
+      - "7000:23"
+  
+  # Web
+  web-path-traversal:
+    build:
+      context: ./Web/path_traversal/
+    ports:
+      - "8000:80"
+
+  # sql_based_cookie_injection skipped for now (the machine I'm working on
+  # atm doesn't have docker-compose 3.4 for setting up networks)
+  web-sql-injection:
+    build:
+      context: ./Web/sql_injection
+    ports:
+      - "9000:8080"
